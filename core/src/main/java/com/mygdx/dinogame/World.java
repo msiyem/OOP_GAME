@@ -15,6 +15,8 @@ public class World {
     private DinoGame game;
     private Player player;
     private Array<Obstacle> obstacles;
+    private Array<Star> stars;
+
     private Moon moon;
     private float obstacleTimer = 0;
     private final float OBSTACLE_INTERVAL = 2f;
@@ -32,12 +34,17 @@ public class World {
     // ✅ NEW: Speed multiplier logic
     private float speedMultiplier = 1.0f;
     private final float SPEED_INCREASE_RATE = 0.05f;
+    private float starSpawnTimer = 0f;
+    private final float STAR_SPAWN_INTERVAL = 5f; // 5s
+    private final float STAR_SPEED = 8f; // fixed speed for all stars
 
     public World(DinoGame game) {
         this.game = game;
         player = new Player(game);
-        moon = new Moon("moon.png",250,20f,2f);
+        moon = new Moon("moon.png",250,12f,2f);
         obstacles = new Array<>();
+        stars = new Array<>();
+
         ground = new Texture("ground.png");
         shapeRenderer = new ShapeRenderer();
         font = new BitmapFont();
@@ -58,6 +65,24 @@ public class World {
         moon.update(delta);
         player.update(delta);
         obstacleTimer += delta;
+        // 1. Spawn new stars every 0.5s
+        starSpawnTimer += delta;
+        if (starSpawnTimer >= STAR_SPAWN_INTERVAL) {
+            stars.add(new Star("star.png", STAR_SPEED)); // new star created
+            starSpawnTimer = 0;
+        }
+
+        // 2. Update and remove off-screen stars
+        for (int i = stars.size - 1; i >= 0; i--) {
+            Star star = stars.get(i);
+            star.update(delta);
+
+            if (star.getX() + star.getWidth() < 0) {
+                stars.removeIndex(i); // remove if off screen
+            }
+        }
+
+
 
         if (obstacleTimer > OBSTACLE_INTERVAL) {
             obstacles.add(new Obstacle(game, speedMultiplier)); // ✅ Pass current speed multiplier
@@ -100,6 +125,11 @@ public class World {
     public void render() {
         game.batch.begin();
         moon.render(game.batch);
+        for (Star star : stars) {
+            star.render(game.batch);
+        }
+
+        moon.render(game.batch); // moon comes after stars
 
         game.batch.draw(ground, groundOffsetX, 0);
         game.batch.draw(ground, groundOffsetX + ground.getWidth(), 0);
@@ -138,6 +168,10 @@ public class World {
         for (Obstacle obs : obstacles) {
             obs.dispose();
         }
+        for (Star star : stars) {
+            star.dispose();
+        }
+
         font.dispose();
     }
 }
