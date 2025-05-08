@@ -1,5 +1,6 @@
 package com.mygdx.dinogame;
 
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
@@ -14,6 +15,7 @@ public class World {
     private DinoGame game;
     private Player player;
     private Array<Obstacle> obstacles;
+    private Moon moon;
     private float obstacleTimer = 0;
     private final float OBSTACLE_INTERVAL = 2f;
     private Texture ground;
@@ -24,6 +26,8 @@ public class World {
     private BitmapFont font;
     private Preferences prefs;
     private int highScore;
+    private Sound highScoreSound;
+    private Sound gameOverSound;
 
     // ✅ NEW: Speed multiplier logic
     private float speedMultiplier = 1.0f;
@@ -32,6 +36,7 @@ public class World {
     public World(DinoGame game) {
         this.game = game;
         player = new Player(game);
+        moon = new Moon("moon.png",250,20f,2f);
         obstacles = new Array<>();
         ground = new Texture("ground.png");
         shapeRenderer = new ShapeRenderer();
@@ -39,6 +44,8 @@ public class World {
         startTime = TimeUtils.millis();
         prefs = Gdx.app.getPreferences("DinoPrefs");
         highScore = prefs.getInteger("highScore", 0);
+//        highScoreSound= Gdx.audio.newSound(Gdx.files.internal("highscoreSound.wav"));
+        gameOverSound= Gdx.audio.newSound(Gdx.files.internal("death.wav"));
     }
 
     public void update(float delta) {
@@ -48,7 +55,7 @@ public class World {
             }
             return;
         }
-
+        moon.update(delta);
         player.update(delta);
         obstacleTimer += delta;
 
@@ -61,6 +68,8 @@ public class World {
             obs.update(delta);
             if (obs.getBounds().overlaps(player.getBounds()) && player.isAlive()) {
                 player.setAlive(false);
+                gameOverSound.play(1.0f);
+
                 if (score > highScore) {
                     highScore = score;
                     prefs.putInteger("highScore", highScore);
@@ -90,6 +99,7 @@ public class World {
 
     public void render() {
         game.batch.begin();
+        moon.render(game.batch);
 
         game.batch.draw(ground, groundOffsetX, 0);
         game.batch.draw(ground, groundOffsetX + ground.getWidth(), 0);
@@ -99,13 +109,16 @@ public class World {
         }
 
         player.render();
-
-        font.draw(game.batch, "Score: " + score, 20, 460);
-        font.draw(game.batch, "High Score: " + highScore, 20, 440);
+        font.setColor(0,0,0,0.5f);
+        font.draw(game.batch, "Score: " + score, 20, 560);
+        font.draw(game.batch, "High Score: " + highScore, 20, 540);
 
         if (!player.isAlive()) {
-            font.draw(game.batch, "Game Over", 350, 300);
-            font.draw(game.batch, "Press R to Restart", 320, 270);
+            font.getData().setScale(2f);
+            font.draw(game.batch, "Game Over", 350, 400);
+            font.draw(game.batch, "Press R to Restart", 320, 350);
+            font.getData().setScale(1f);
+
         }
 
         game.batch.end();
@@ -121,6 +134,7 @@ public class World {
         ground.dispose();
         shapeRenderer.dispose();
         player.dispose();
+        moon.dispose();
         for (Obstacle obs : obstacles) {
             obs.dispose();
         }
