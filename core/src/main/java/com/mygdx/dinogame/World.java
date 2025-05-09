@@ -163,6 +163,7 @@ public class World {
         }
 
         player.render();
+
         font.setColor(0,0,0,0.5f);
         font.draw(game.batch, "Score: " + score, 20, 560);
         font.draw(game.batch, "High Score: " + highScore, 20, 540);

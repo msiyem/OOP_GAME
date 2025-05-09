@@ -21,7 +21,7 @@ public class Star {
     private void initPositionAndScale() {
         this.x = Gdx.graphics.getWidth(); // right edge
         this.y = 250 + random.nextInt(300); // always above moon
-        this.scale = 0.05f + random.nextFloat() * 0.15f; // random scale (0.2 - 0.5)
+        this.scale = 0.08f + random.nextFloat() * 0.2f; // random scale (0.2 - 0.5)
     }
 
     public void update(float delta) {
