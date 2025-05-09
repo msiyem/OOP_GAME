@@ -36,7 +36,7 @@ public class World {
     private float speedMultiplier = 1.0f;
     private final float SPEED_INCREASE_RATE = 0.05f;
     private float starSpawnTimer = 0f;
-    private final float STAR_SPAWN_INTERVAL = 5f; // 5s
+    private final float STAR_SPAWN_INTERVAL = 3f; // 5s
     private final float STAR_SPEED = 8f; // fixed speed for all stars
     // roadmark
     private float roadMarkTimer = 0f;
@@ -67,7 +67,7 @@ public class World {
             }
             return;
         }
-        moon.update(delta);
+
         player.update(delta);
         obstacleTimer += delta;
         // star
@@ -87,7 +87,7 @@ public class World {
                 stars.removeIndex(i); // remove if off screen
             }
         }
-
+        moon.update(delta);
 
         //obstacle
         if (obstacleTimer > OBSTACLE_INTERVAL) {

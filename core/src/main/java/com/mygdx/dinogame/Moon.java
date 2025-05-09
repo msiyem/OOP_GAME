@@ -14,7 +14,7 @@ public class Moon {
 
     public Moon(String texturePath, float startY, float speed, float resetDelay) {
         this.texture = new Texture(texturePath);
-        this.x = Gdx.graphics.getWidth();
+        this.x = Gdx.graphics.getWidth()-100;
         this.y = startY;
         this.speed = speed;
         this.delay = resetDelay;
@@ -39,7 +39,9 @@ public class Moon {
     }
 
     public void render(SpriteBatch batch) {
+        batch.setColor(1,1,1,0.2f);
         batch.draw(texture, x, y);
+        batch.setColor(1,1,1,1);
     }
 
     public void dispose() {
