@@ -16,11 +16,12 @@ public class World {
     private Player player;
     private Array<Obstacle> obstacles;
     private Array<Star> stars;
+    private Array<RoadMark> roadMarks;
 
     private Moon moon;
     private float obstacleTimer = 0;
     private final float OBSTACLE_INTERVAL = 2f;
-    private Texture ground;
+//    private Texture ground;
     private float groundOffsetX = 0;
     private ShapeRenderer shapeRenderer;
     private int score = 0;
@@ -37,15 +38,19 @@ public class World {
     private float starSpawnTimer = 0f;
     private final float STAR_SPAWN_INTERVAL = 5f; // 5s
     private final float STAR_SPEED = 8f; // fixed speed for all stars
+    // roadmark
+    private float roadMarkTimer = 0f;
+    private final float ROAD_MARK_INTERVAL = 0.1f; // every 300ms
 
     public World(DinoGame game) {
         this.game = game;
         player = new Player(game);
-        moon = new Moon("moon.png",250,12f,2f);
-        obstacles = new Array<>();
-        stars = new Array<>();
+        moon = new Moon("moon.png",250,12f,0f);
+        obstacles = new Array<>();//bostacles
+        stars = new Array<>();//star
+        roadMarks = new Array<>();//roadmark
 
-        ground = new Texture("ground.png");
+//        ground = new Texture("ground.png");
         shapeRenderer = new ShapeRenderer();
         font = new BitmapFont();
         startTime = TimeUtils.millis();
@@ -56,7 +61,7 @@ public class World {
     }
 
     public void update(float delta) {
-        if (!player.isAlive()) {
+        if (!player.isAlive()) {// restart batton
             if (Gdx.input.isKeyJustPressed(Input.Keys.R)) {
                 game.setScreen(new GameScreen(game)); // Restart game
             }
@@ -65,6 +70,7 @@ public class World {
         moon.update(delta);
         player.update(delta);
         obstacleTimer += delta;
+        // star
         // 1. Spawn new stars every 0.5s
         starSpawnTimer += delta;
         if (starSpawnTimer >= STAR_SPAWN_INTERVAL) {
@@ -83,7 +89,7 @@ public class World {
         }
 
 
-
+        //obstacle
         if (obstacleTimer > OBSTACLE_INTERVAL) {
             obstacles.add(new Obstacle(game, speedMultiplier)); // ✅ Pass current speed multiplier
             obstacleTimer = 0;
@@ -110,29 +116,47 @@ public class World {
             }
         }
 
-        // ✅ Move ground with speed multiplier
-        groundOffsetX -= 200 * delta * speedMultiplier;
-        if (groundOffsetX <= -ground.getWidth()) {
-            groundOffsetX = 0;
-        }
 
-        if (player.isAlive()) {
+
+        if (player.isAlive()) { //speed
             score = (int)((TimeUtils.millis() - startTime) / 100);
             speedMultiplier += SPEED_INCREASE_RATE * delta; // ✅ Increase speed over time
         }
+
+        //roadMark
+        roadMarkTimer += delta;
+        if (roadMarkTimer >= ROAD_MARK_INTERVAL) {
+            roadMarks.add(new RoadMark(Gdx.graphics.getWidth(), 200 * speedMultiplier));
+            roadMarkTimer = 0;
+        }
+
+        for (int i = roadMarks.size - 1; i >= 0; i--) {
+            RoadMark rm = roadMarks.get(i);
+            rm.update(delta);
+            if (rm.isOffScreen()) {
+                roadMarks.removeIndex(i);
+            }
+        }
+
+
     }
 
     public void render() {
         game.batch.begin();
+
         moon.render(game.batch);
+
         for (Star star : stars) {
             star.render(game.batch);
         }
 
         moon.render(game.batch); // moon comes after stars
 
-        game.batch.draw(ground, groundOffsetX, 0);
-        game.batch.draw(ground, groundOffsetX + ground.getWidth(), 0);
+//        game.batch.draw(ground, groundOffsetX, 0);
+//        game.batch.draw(ground, groundOffsetX + ground.getWidth(), 0);
+        for (RoadMark rm : roadMarks) {
+            rm.render(game.batch);
+        }
 
         for (Obstacle obs : obstacles) {
             obs.render();
@@ -161,7 +185,7 @@ public class World {
     }
 
     public void dispose() {
-        ground.dispose();
+//        ground.dispose();
         shapeRenderer.dispose();
         player.dispose();
         moon.dispose();
@@ -171,6 +195,10 @@ public class World {
         for (Star star : stars) {
             star.dispose();
         }
+        for (RoadMark rm : roadMarks) {
+            rm.dispose();
+        }
+
 
         font.dispose();
     }
