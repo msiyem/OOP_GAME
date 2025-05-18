@@ -41,6 +41,7 @@ com.mygdx.game
 │   ├── ScoreManager.java  # Score and high score management
 │   └── Assets.java        # Asset loading and disposal
 📊 Mermaid.js Class Diagram
+```mermaid
 classDiagram
     class MainGame {
         +void create()
@@ -106,27 +107,4 @@ classDiagram
         +void render(SpriteBatch batch)
     }
 
-    class RoadMark {
-        -Vector2 position
-        -Texture texture
-        +void update(float delta)
-        +void render(SpriteBatch batch)
-    }
-
-    class ScoreManager {
-        -int score
-        -int highScore
-        +void increaseScore(int amount)
-        +void reset()
-        +int getScore()
-        +int getHighScore()
-    }
-
-    MainGame --> GameScreen
-    GameScreen --> World
-    World --> Player
-    World --> Obstacle
-    World --> Cloud
-    World --> Moon
-    World --> Star
     World --> ScoreManager
