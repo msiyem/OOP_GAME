@@ -1,38 +1,132 @@
-<<<<<<< HEAD
-# OOP_GAME
-Dino Runner is a 2D endless runner game built using Java and LibGDX. It follows Object-Oriented Programming (OOP) principles with classes like Player, Obstacle, World, and GameScreen. The game includes real-time scoring, collision detection, sound effects, and increasing difficulty over time.
-=======
-# DinoGame
+# 🦖 Dino Runner Game (LibGDX)
 
-A [libGDX](https://libgdx.com/) project generated with [gdx-liftoff](https://github.com/libgdx/gdx-liftoff).
+A 2D infinite runner game inspired by the classic Chrome Dino game. Built using **LibGDX**, this version includes enhancements like dynamic background (moon, stars), road marks, moving clouds, score tracking, and multiple obstacles.
 
-This project was generated with a template including simple application launchers and an `ApplicationAdapter` extension that draws libGDX logo.
+## 🚀 Features
 
-## Platforms
+- 🕹️ Player jump logic  
+- 🌵 Obstacle spawning (multiple cacti types)  
+- 🌙 Dynamic moon & stars animation  
+- 🛣️ Moving road marks and scrolling background  
+- ☁️ Randomly spawning clouds  
+- 🎮 Game restart with score and high score  
+- 📈 Scoring and persistent high score tracking  
+- 🎨 Optimized for smooth performance and modular design  
 
-- `core`: Main module with the application logic shared by all platforms.
-- `lwjgl3`: Primary desktop platform using LWJGL3; was called 'desktop' in older docs.
+## 🎮 How to Play
 
-## Gradle
+- Press **SPACE** or tap to make the Dino jump.  
+- Avoid hitting obstacles like cacti and birds.  
+- Survive as long as possible to increase your score.  
+- After game over, press **SPACE** to restart.  
 
-This project uses [Gradle](https://gradle.org/) to manage dependencies.
-The Gradle wrapper was included, so you can run Gradle tasks using `gradlew.bat` or `./gradlew` commands.
-Useful Gradle tasks and flags:
+## 🧱 Project Structure
 
-- `--continue`: when using this flag, errors will not stop the tasks from running.
-- `--daemon`: thanks to this flag, Gradle daemon will be used to run chosen tasks.
-- `--offline`: when using this flag, cached dependency archives will be used.
-- `--refresh-dependencies`: this flag forces validation of all dependencies. Useful for snapshot versions.
-- `build`: builds sources and archives of every project.
-- `cleanEclipse`: removes Eclipse project data.
-- `cleanIdea`: removes IntelliJ project data.
-- `clean`: removes `build` folders, which store compiled classes and built archives.
-- `eclipse`: generates Eclipse project data.
-- `idea`: generates IntelliJ project data.
-- `lwjgl3:jar`: builds application's runnable jar, which can be found at `lwjgl3/build/libs`.
-- `lwjgl3:run`: starts the application.
-- `test`: runs unit tests (if any).
+```plaintext
+com.mygdx.game
+│
+├── MainGame.java          # Launches the game and sets screen
+├── GameScreen.java        # Manages rendering and update loop
+├── World.java             # Handles game logic, spawning, collision
+│
+├── entities/
+│   ├── Player.java        # Player control and animation
+│   ├── Obstacle.java      # Cactus and bird logic
+│   ├── Cloud.java         # Cloud movement logic
+│   ├── Moon.java          # Moon movement and rendering
+│   ├── Star.java          # Star twinkling effect
+│   ├── RoadMark.java      # Road mark scrolling effect
+│
+├── utils/
+│   ├── ScoreManager.java  # Score and high score management
+│   └── Assets.java        # Asset loading and disposal
+📊 Mermaid.js Class Diagram
+classDiagram
+    class MainGame {
+        +void create()
+        +void render()
+        +void dispose()
+    }
 
-Note that most tasks that are not specific to a single project can be run with `name:` prefix, where the `name` should be replaced with the ID of a specific project.
-For example, `core:clean` removes `build` folder only from the `core` project.
->>>>>>> e3dbc01 (Dino Runner Game)
+    class GameScreen {
+        -World world
+        +void render(float delta)
+        +void resize(int width, int height)
+        +void dispose()
+    }
+
+    class World {
+        -int speedMultiplier
+        -Player player
+        -ArrayList~Obstacle~ obstacles
+        -ArrayList~Cloud~ clouds
+        -Moon moon
+        -Star star
+        -ScoreManager scoreManager
+        +void update(float delta)
+        +void spawnObstacle()
+        +boolean checkCollision()
+        +void reset()
+    }
+
+    class Player {
+        -Vector2 position
+        -Texture texture
+        -boolean isJumping
+        +void jump()
+        +void update(float delta)
+        +void render(SpriteBatch batch)
+    }
+
+    class Obstacle {
+        -Vector2 position
+        -Texture texture
+        +void update(float delta)
+        +void render(SpriteBatch batch)
+    }
+
+    class Cloud {
+        -Vector2 position
+        -Texture texture
+        +void update(float delta)
+        +void render(SpriteBatch batch)
+    }
+
+    class Moon {
+        -Vector2 position
+        -Texture texture
+        +void update(float delta)
+        +void render(SpriteBatch batch)
+    }
+
+    class Star {
+        -Vector2 position
+        -Texture texture
+        +void update(float delta)
+        +void render(SpriteBatch batch)
+    }
+
+    class RoadMark {
+        -Vector2 position
+        -Texture texture
+        +void update(float delta)
+        +void render(SpriteBatch batch)
+    }
+
+    class ScoreManager {
+        -int score
+        -int highScore
+        +void increaseScore(int amount)
+        +void reset()
+        +int getScore()
+        +int getHighScore()
+    }
+
+    MainGame --> GameScreen
+    GameScreen --> World
+    World --> Player
+    World --> Obstacle
+    World --> Cloud
+    World --> Moon
+    World --> Star
+    World --> ScoreManager
