@@ -18,7 +18,7 @@ A 2D infinite runner game inspired by the classic Chrome Dino game. Built using 
 - Press **SPACE** or tap to make the Dino jump.  
 - Avoid hitting obstacles like cacti and birds.  
 - Survive as long as possible to increase your score.  
-- After game over, press **SPACE** to restart.  
+- After game over, press **R** to restart.  
 
 ## 🧱 Project Structure
 
