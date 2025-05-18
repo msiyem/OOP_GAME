@@ -23,88 +23,116 @@ A 2D infinite runner game inspired by the classic Chrome Dino game. Built using 
 ## 🧱 Project Structure
 
 ```plaintext
-com.mygdx.game
-│
-├── MainGame.java          # Launches the game and sets screen
-├── GameScreen.java        # Manages rendering and update loop
-├── World.java             # Handles game logic, spawning, collision
-│
-├── entities/
-│   ├── Player.java        # Player control and animation
-│   ├── Obstacle.java      # Cactus and bird logic
-│   ├── Cloud.java         # Cloud movement logic
-│   ├── Moon.java          # Moon movement and rendering
-│   ├── Star.java          # Star twinkling effect
-│   ├── RoadMark.java      # Road mark scrolling effect
-│
-├── utils/
-│   ├── ScoreManager.java  # Score and high score management
-│   └── Assets.java        # Asset loading and disposal
-📊 Mermaid.js Class Diagram
+## 📦 Project Structure
+
+```plaintext
+com.mygdx.dinogame/
+├── DinoGame.java         # Main Game class
+├── GameScreen.java       # Manages screen lifecycle
+├── World.java            # Core game loop (update/render logic)
+├── Player.java           # Dino player logic
+├── Obstacle.java         # Cactus obstacle logic
+├── Moon.java             # Background moon rendering
+├── Star.java             # Animated background stars
+├── RoadMark.java         # Moving road dashes
+```
+
+##📊 Mermaid.js Class Diagram
 ```mermaid
 classDiagram
-    class MainGame {
-        +void create()
-        +void render()
-        +void dispose()
+    class DinoGame {
+        +SpriteBatch batch
+        +create()
+        +dispose()
     }
 
     class GameScreen {
+        -DinoGame game
         -World world
-        +void render(float delta)
-        +void resize(int width, int height)
-        +void dispose()
+        +show()
+        +render(float delta)
+        +resize(int width, int height)
+        +pause()
+        +resume()
+        +hide()
+        +dispose()
     }
 
     class World {
-        -int speedMultiplier
+        -DinoGame game
         -Player player
-        -ArrayList~Obstacle~ obstacles
-        -ArrayList~Cloud~ clouds
+        -Array~Obstacle~ obstacles
+        -Array~Star~ stars
+        -Array~RoadMark~ roadMarks
         -Moon moon
-        -Star star
-        -ScoreManager scoreManager
-        +void update(float delta)
-        +void spawnObstacle()
-        +boolean checkCollision()
-        +void reset()
+        -float obstacleTimer
+        -float speedMultiplier
+        -int score
+        -int highScore
+        +update(float delta)
+        +render()
+        +dispose()
     }
 
     class Player {
-        -Vector2 position
-        -Texture texture
-        -boolean isJumping
-        +void jump()
-        +void update(float delta)
-        +void render(SpriteBatch batch)
+        -Texture textureRun1
+        -Texture textureRun2
+        -Texture textureJump
+        -float x, y, velocityY
+        -Rectangle bounds
+        -boolean isAlive
+        +update(float delta)
+        +render()
+        +getBounds()
+        +isAlive()
+        +setAlive(boolean alive)
+        +dispose()
     }
 
     class Obstacle {
-        -Vector2 position
         -Texture texture
-        +void update(float delta)
-        +void render(SpriteBatch batch)
-    }
-
-    class Cloud {
-        -Vector2 position
-        -Texture texture
-        +void update(float delta)
-        +void render(SpriteBatch batch)
+        -float x, y, width, height
+        -Rectangle bounds
+        +update(float delta)
+        +render()
+        +getBounds()
+        +dispose()
     }
 
     class Moon {
-        -Vector2 position
         -Texture texture
-        +void update(float delta)
-        +void render(SpriteBatch batch)
+        -float x, y, speed
+        +update(float delta)
+        +render(SpriteBatch batch)
+        +dispose()
     }
 
     class Star {
-        -Vector2 position
         -Texture texture
-        +void update(float delta)
-        +void render(SpriteBatch batch)
+        -float x, y, speed, scale
+        +update(float delta)
+        +render(SpriteBatch batch)
+        +dispose()
+        +getX()
+        +getWidth()
     }
 
-    World --> ScoreManager
+    class RoadMark {
+        -float x, y, speed, scale
+        -BitmapFont font
+        +update(float delta)
+        +render(SpriteBatch batch)
+        +isOffScreen()
+        +dispose()
+    }
+
+    DinoGame --> GameScreen
+    GameScreen --> World
+    World --> Player
+    World --> Obstacle
+    World --> Moon
+    World --> Star
+    World --> RoadMark
+    Obstacle --> DinoGame
+    Player --> DinoGame
+    GameScreen --> AssetLoader
