@@ -18,7 +18,6 @@ public class Player {
     private DinoGame game;
     private float animationTimer = 0;
     private Sound jumpSound;
-//    private Sound deathSound;
     private boolean hasPlayedDeathSound = false;
 
     public Player(DinoGame game) {
@@ -30,17 +29,10 @@ public class Player {
         y = 100;
         bounds = new Rectangle(x, y, width, height);
         jumpSound = Gdx.audio.newSound(Gdx.files.internal("jump.wav"));
-//        deathSound = Gdx.audio.newSound(Gdx.files.internal("death.wav"));
+
     }
 
     public void update(float delta) {
-//        if (!isAlive) {
-//            if (!hasPlayedDeathSound) {
-//                deathSound.play();
-//                hasPlayedDeathSound = true;
-//            }
-//            return;
-//        }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE) && y <= 100) {
             velocityY = jumpVelocity;
@@ -89,6 +81,6 @@ public class Player {
         textureRun2.dispose();
         textureJump.dispose();
         jumpSound.dispose();
-//        deathSound.dispose();
+
     }
 }
