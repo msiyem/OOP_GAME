@@ -1,6 +1,7 @@
 # 🦖 Dino Runner Game (LibGDX)
 
 A 2D infinite runner game inspired by the classic Chrome Dino game. Built using **LibGDX**, this version includes enhancements like dynamic background (moon, stars), road marks, moving clouds, score tracking, and multiple obstacles.
+![DinoGame Image](https://i.postimg.cc/j2SnnFL2/Screenshot-2025-05-18-210207.png)
 
 ## 🚀 Features
 
