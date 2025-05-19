@@ -17,11 +17,9 @@ public class World {
     private Array<Obstacle> obstacles;
     private Array<Star> stars;
     private Array<RoadMark> roadMarks;
-
     private Moon moon;
     private float obstacleTimer = 0;
     private final float OBSTACLE_INTERVAL = 2f;
-//    private Texture ground;
     private float groundOffsetX = 0;
     private ShapeRenderer shapeRenderer;
     private int score = 0;
@@ -32,14 +30,11 @@ public class World {
     private Sound highScoreSound;
     private Sound gameOverSound;
     private boolean highScoreSoundflag;
-
-
     private float speedMultiplier = 1.0f;
     private final float SPEED_INCREASE_RATE = 0.03f;
     private float starSpawnTimer = 0f;
     private final float STAR_SPAWN_INTERVAL = 3f;
     private final float STAR_SPEED = 8f;
-    // roadmark
     private float roadMarkTimer = 0f;
     private final float ROAD_MARK_INTERVAL = 0.1f; // every 100ms
 
@@ -50,8 +45,6 @@ public class World {
         obstacles = new Array<>();
         stars = new Array<>();
         roadMarks = new Array<>();
-
-//        ground = new Texture("ground.png");
         shapeRenderer = new ShapeRenderer();
         font = new BitmapFont();
         startTime = TimeUtils.millis();
@@ -62,7 +55,6 @@ public class World {
     }
 
     public void update(float delta) {
-
         if (!player.isAlive()) {
             if (Gdx.input.isKeyJustPressed(Input.Keys.R)) {
                 game.setScreen(new GameScreen(game));
@@ -70,16 +62,14 @@ public class World {
             }
             return;
         }
-
         player.update(delta);
         obstacleTimer += delta;
-
+        //stars
         starSpawnTimer += delta;
         if (starSpawnTimer >= STAR_SPAWN_INTERVAL) {
             stars.add(new Star("star.png", STAR_SPEED));
             starSpawnTimer = 0;
         }
-
         for (int i = stars.size - 1; i >= 0; i--) {
             Star star = stars.get(i);
             star.update(delta);
@@ -89,13 +79,27 @@ public class World {
             }
         }
         moon.update(delta);
-
         //obstacle
         if (obstacleTimer > OBSTACLE_INTERVAL) {
-            obstacles.add(new Obstacle(game, speedMultiplier));
+            int type=(int)(Math.random()*4);
+            Obstacle obstacle;
+            switch(type){
+                case 0:
+                    obstacle = new SmallCactusSingle(game,speedMultiplier);
+                    break;
+                case 1:
+                    obstacle = new SmallCactusDouble(game,speedMultiplier);
+                    break;
+                case 3:
+                    obstacle = new SmallCactusTriple(game,speedMultiplier);
+                    break;
+                default:
+                    obstacle = new BigCactus(game,speedMultiplier);
+            }
+            obstacles.add(obstacle);
             obstacleTimer = 0;
-        }
 
+        }
         for (Obstacle obs : obstacles) {
             obs.update(delta);
             if (obs.getBounds().overlaps(player.getBounds()) && player.isAlive()) {
@@ -109,16 +113,13 @@ public class World {
                 }
             }
         }
-
         for (int i = obstacles.size - 1; i >= 0; i--) {
             if (obstacles.get(i).getBounds().x + 64 < 0) {
                 obstacles.removeIndex(i);
             }
         }
-
-
-
-        if (player.isAlive()) { //speed
+        //speed
+        if (player.isAlive()) {
             score = (int)((TimeUtils.millis() - startTime) / 100);
             speedMultiplier += SPEED_INCREASE_RATE * delta;
             if (score > highScore && !highScoreSoundflag) {
@@ -126,14 +127,12 @@ public class World {
                 highScoreSoundflag = true;
             }
         }
-
         //roadMark
         roadMarkTimer += delta;
         if (roadMarkTimer >= ROAD_MARK_INTERVAL) {
             roadMarks.add(new RoadMark(Gdx.graphics.getWidth(), 200 * speedMultiplier));
             roadMarkTimer = 0;
         }
-
         for (int i = roadMarks.size - 1; i >= 0; i--) {
             RoadMark rm = roadMarks.get(i);
             rm.update(delta);
@@ -147,31 +146,20 @@ public class World {
 
     public void render() {
         game.batch.begin();
-
-        moon.render(game.batch);
-
         for (Star star : stars) {
             star.render(game.batch);
         }
-
         moon.render(game.batch);
-
-//        game.batch.draw(ground, groundOffsetX, 0);
-//        game.batch.draw(ground, groundOffsetX + ground.getWidth(), 0);
         for (RoadMark rm : roadMarks) {
             rm.render(game.batch);
         }
-
         for (Obstacle obs : obstacles) {
             obs.render();
         }
-
         player.render();
-
         font.setColor(0,0,0,0.5f);
         font.draw(game.batch, "Score: " + score, 20, 560);
         font.draw(game.batch, "High Score: " + highScore, 20, 540);
-
         if (!player.isAlive()) {
             font.getData().setScale(2f);
             font.draw(game.batch, "Game Over", 350, 400);
@@ -179,9 +167,7 @@ public class World {
             font.getData().setScale(1f);
 
         }
-
         game.batch.end();
-
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setColor(0.2f, 0.2f, 0.2f, 1);
         shapeRenderer.rect(0, 99, Gdx.graphics.getWidth(), 6);
@@ -189,7 +175,6 @@ public class World {
     }
 
     public void dispose() {
-//        ground.dispose();
         shapeRenderer.dispose();
         player.dispose();
         moon.dispose();
@@ -202,8 +187,6 @@ public class World {
         for (RoadMark rm : roadMarks) {
             rm.dispose();
         }
-
-
         font.dispose();
     }
 }
