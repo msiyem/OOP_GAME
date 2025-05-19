@@ -31,24 +31,25 @@ public class World {
     private int highScore;
     private Sound highScoreSound;
     private Sound gameOverSound;
+    private boolean highScoreSoundflag;
 
-    // ✅ NEW: Speed multiplier logic
+
     private float speedMultiplier = 1.0f;
-    private final float SPEED_INCREASE_RATE = 0.05f;
+    private final float SPEED_INCREASE_RATE = 0.03f;
     private float starSpawnTimer = 0f;
-    private final float STAR_SPAWN_INTERVAL = 3f; // 5s
-    private final float STAR_SPEED = 8f; // fixed speed for all stars
+    private final float STAR_SPAWN_INTERVAL = 3f;
+    private final float STAR_SPEED = 8f;
     // roadmark
     private float roadMarkTimer = 0f;
-    private final float ROAD_MARK_INTERVAL = 0.1f; // every 300ms
+    private final float ROAD_MARK_INTERVAL = 0.1f; // every 100ms
 
     public World(DinoGame game) {
         this.game = game;
         player = new Player(game);
         moon = new Moon("moon.png",250,12f,0f);
-        obstacles = new Array<>();//bostacles
-        stars = new Array<>();//star
-        roadMarks = new Array<>();//roadmark
+        obstacles = new Array<>();
+        stars = new Array<>();
+        roadMarks = new Array<>();
 
 //        ground = new Texture("ground.png");
         shapeRenderer = new ShapeRenderer();
@@ -56,42 +57,42 @@ public class World {
         startTime = TimeUtils.millis();
         prefs = Gdx.app.getPreferences("DinoPrefs");
         highScore = prefs.getInteger("highScore", 0);
-//        highScoreSound= Gdx.audio.newSound(Gdx.files.internal("highscoreSound.wav"));
+        highScoreSound= Gdx.audio.newSound(Gdx.files.internal("highscoreSound.wav"));
         gameOverSound= Gdx.audio.newSound(Gdx.files.internal("death.wav"));
     }
 
     public void update(float delta) {
-        if (!player.isAlive()) {// restart batton
+
+        if (!player.isAlive()) {
             if (Gdx.input.isKeyJustPressed(Input.Keys.R)) {
-                game.setScreen(new GameScreen(game)); // Restart game
+                game.setScreen(new GameScreen(game));
+                highScoreSoundflag=false;
             }
             return;
         }
 
         player.update(delta);
         obstacleTimer += delta;
-        // star
-        // 1. Spawn new stars every 0.5s
+
         starSpawnTimer += delta;
         if (starSpawnTimer >= STAR_SPAWN_INTERVAL) {
-            stars.add(new Star("star.png", STAR_SPEED)); // new star created
+            stars.add(new Star("star.png", STAR_SPEED));
             starSpawnTimer = 0;
         }
 
-        // 2. Update and remove off-screen stars
         for (int i = stars.size - 1; i >= 0; i--) {
             Star star = stars.get(i);
             star.update(delta);
 
             if (star.getX() + star.getWidth() < 0) {
-                stars.removeIndex(i); // remove if off screen
+                stars.removeIndex(i);
             }
         }
         moon.update(delta);
 
         //obstacle
         if (obstacleTimer > OBSTACLE_INTERVAL) {
-            obstacles.add(new Obstacle(game, speedMultiplier)); // ✅ Pass current speed multiplier
+            obstacles.add(new Obstacle(game, speedMultiplier));
             obstacleTimer = 0;
         }
 
@@ -109,7 +110,6 @@ public class World {
             }
         }
 
-        // Clean up off-screen obstacles
         for (int i = obstacles.size - 1; i >= 0; i--) {
             if (obstacles.get(i).getBounds().x + 64 < 0) {
                 obstacles.removeIndex(i);
@@ -120,7 +120,11 @@ public class World {
 
         if (player.isAlive()) { //speed
             score = (int)((TimeUtils.millis() - startTime) / 100);
-            speedMultiplier += SPEED_INCREASE_RATE * delta; // ✅ Increase speed over time
+            speedMultiplier += SPEED_INCREASE_RATE * delta;
+            if (score > highScore && !highScoreSoundflag) {
+                highScoreSound.play(1.0f);
+                highScoreSoundflag = true;
+            }
         }
 
         //roadMark
@@ -150,7 +154,7 @@ public class World {
             star.render(game.batch);
         }
 
-        moon.render(game.batch); // moon comes after stars
+        moon.render(game.batch);
 
 //        game.batch.draw(ground, groundOffsetX, 0);
 //        game.batch.draw(ground, groundOffsetX + ground.getWidth(), 0);
@@ -178,10 +182,9 @@ public class World {
 
         game.batch.end();
 
-        // ✅ Slightly raise road line for visual alignment
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setColor(0.2f, 0.2f, 0.2f, 1);
-        shapeRenderer.rect(0, 99, Gdx.graphics.getWidth(), 6); // visually lines up with feet
+        shapeRenderer.rect(0, 99, Gdx.graphics.getWidth(), 6);
         shapeRenderer.end();
     }
 
