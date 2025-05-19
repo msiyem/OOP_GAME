@@ -15,7 +15,7 @@ public class Obstacle {
     public Obstacle(DinoGame game, float speedMultiplier) {
         this.game = game;
         Random rand = new Random();
-        int type = rand.nextInt(4); // 0 to 3 for 4 types
+        int type = rand.nextInt(4);
 
         switch (type) {
             case 0: // Single small cactus
@@ -30,27 +30,26 @@ public class Obstacle {
                 break;
             case 2: // Triple small cactus
                 texture = new Texture("cactus_triple.png");
-                width = 80;
+                width = 70;
                 height = 60;
                 break;
             case 3: // Big cactus
                 texture = new Texture("cactus_big.png");
                 width = 60;
-                height = 80;
+                height = 70;
                 break;
         }
 
         x = 800;
-        y = 101; // ✅ matches ground line
+        y = 101;
         speed = 200 * speedMultiplier;
 
-        // ✅ slightly smaller hitbox
-        bounds = new Rectangle(x + 8, y, width - 16, height);
+        bounds = new Rectangle(x+7.5f , y, width-15 , height);
     }
 
     public void update(float delta) {
         x -= speed * delta;
-        bounds.setPosition(x + 8, y);
+        bounds.setPosition(x , y);
     }
 
     public void render() {
