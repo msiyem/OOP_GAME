@@ -97,7 +97,14 @@ classDiagram
         +getBounds()
         +dispose()
     }
-
+    class SmallCactusSingle {
+    }
+    class SmallCactusDouble {
+    }
+    class SmallCactusTriple {
+    }
+    class BigCactus {
+    }
     class Moon {
         -Texture texture
         -float x, y, speed
@@ -124,6 +131,7 @@ classDiagram
         +isOffScreen()
         +dispose()
     }
+    
 
     DinoGame --> GameScreen
     GameScreen --> World
@@ -134,4 +142,7 @@ classDiagram
     World --> RoadMark
     Obstacle --> DinoGame
     Player --> DinoGame
-    GameScreen --> AssetLoader
+    Obstacle <|-- SmallCactusSingle
+    Obstacle <|-- SmallCactusDouble
+    Obstacle <|-- SmallCactusTriple
+    Obstacle <|-- BigCactus
