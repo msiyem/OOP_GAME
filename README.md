@@ -24,9 +24,6 @@ A 2D infinite runner game inspired by the classic Chrome Dino game. Built using 
 ## 🧱 Project Structure
 
 ```plaintext
-## 📦 Project Structure
-
-```plaintext
 com.mygdx.dinogame/
 ├── DinoGame.java         # Main Game class
 ├── GameScreen.java       # Manages screen lifecycle
@@ -38,7 +35,8 @@ com.mygdx.dinogame/
 ├── RoadMark.java         # Moving road dashes
 ```
 
-##📊 Mermaid.js Class Diagram
+## 📊 Mermaid.js Class Diagram
+
 ```mermaid
 classDiagram
     class DinoGame {
