@@ -4,63 +4,36 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Rectangle;
 import java.util.Random;
 
-public class Obstacle {
-    private Texture texture;
-    private float x, y;
-    private float width, height;
-    private float speed;
-    private Rectangle bounds;
-    private DinoGame game;
-
-    public Obstacle(DinoGame game, float speedMultiplier) {
-        this.game = game;
-        Random rand = new Random();
-        int type = rand.nextInt(4);
-
-        switch (type) {
-            case 0: // Single small cactus
-                texture = new Texture("cactus_single.png");
-                width = 40;
-                height = 60;
-                break;
-            case 1: // Double small cactus
-                texture = new Texture("cactus_double.png");
-                width = 60;
-                height = 60;
-                break;
-            case 2: // Triple small cactus
-                texture = new Texture("cactus_triple.png");
-                width = 70;
-                height = 60;
-                break;
-            case 3: // Big cactus
-                texture = new Texture("cactus_big.png");
-                width = 60;
-                height = 70;
-                break;
-        }
-
-        x = 800;
-        y = 101;
-        speed = 200 * speedMultiplier;
-
-        bounds = new Rectangle(x+7.5f , y, width-15 , height);
+public abstract class Obstacle{
+    protected Texture texture;
+    protected float x,y;
+    protected float width,height;
+    protected  float speed;
+    protected Rectangle bounds;
+    protected DinoGame game;
+    public Obstacle(DinoGame game, float speedMultiplier){
+        this.game=game;
+        this.speed=speedMultiplier *200;
+        this.x=800;
+        this.y=101;
     }
-
-    public void update(float delta) {
-        x -= speed * delta;
-        bounds.setPosition(x , y);
+    public void setTextureAndSize(String texturePath, float width, float height){
+        this.texture= new Texture(texturePath);
+        this.width=width;
+        this.height=height;
+        this.bounds= new Rectangle(x+7.5f,y,width-15,height);
     }
-
-    public void render() {
-        game.batch.draw(texture, x, y, width, height);
+    public void update(float delta){
+        x-=speed*delta;
+        bounds.setPosition(x,y);
     }
-
-    public Rectangle getBounds() {
+    public void render(){
+        game.batch.draw(texture,x,y,width,height);
+    }
+    public Rectangle getBounds(){
         return bounds;
     }
-
-    public void dispose() {
+    public void dispose(){
         texture.dispose();
     }
 }
