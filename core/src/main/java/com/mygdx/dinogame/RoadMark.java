@@ -14,8 +14,8 @@ public class RoadMark {
 
     public RoadMark(float screenWidth, float speed) {
         this.x = screenWidth;
-        this.y = 10 + random.nextInt(80); // 👈 10 to 40 px height (below road)
-        this.scale = 0.8f + random.nextFloat() * 2f; // 👈 scale between 0.8 - 2.3
+        this.y = 10 + random.nextInt(80);
+        this.scale = 0.8f + random.nextFloat() * 2f;
         this.speed = speed;
         this.font = new BitmapFont();
         font.getData().setScale(scale);
