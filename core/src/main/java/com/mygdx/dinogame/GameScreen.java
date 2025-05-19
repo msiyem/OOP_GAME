@@ -1,5 +1,6 @@
 package com.mygdx.dinogame;
 
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.Gdx;
@@ -7,6 +8,7 @@ import com.badlogic.gdx.Gdx;
 public class GameScreen implements Screen {
     private final DinoGame game;
     private World world;
+    private boolean paused = false;
 
     public GameScreen(DinoGame game) {
         this.game = game;
@@ -20,6 +22,11 @@ public class GameScreen implements Screen {
     public void render(float delta) {
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        if (Gdx.input.isKeyJustPressed(Input.Keys.P)) {
+            paused = !paused;
+        }
+//        if(!paused)
+
         world.update(delta);
         world.render();
     }
@@ -29,7 +36,9 @@ public class GameScreen implements Screen {
 
     }
     @Override
-    public void pause() {}
+    public void pause() {
+
+    }
     @Override
     public void resume() {}
     @Override
